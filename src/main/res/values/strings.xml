@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Zbi Sample App</string>
+    <string name="showContentHubButtonLabel">Show Content Hub</string>
+    <string name="showContentHubInFragmentButtonLabel">Show Content Hub in Fragment</string>
+    <string name="txt_menu_showuripage">Show URI Entrypoints</string>
+    <string name="button_text_back">BACK</string>
+    <string name="button_text_forward">FORWARD</string>
+    <string name="button_text_close">CLOSE</string>
+    <string name="FullScreen_switch">FullScreen</string>
+    <string name="Theme_switch">Dark Theme</string>
+    <string name="Sync_switch">Blocking Sync</string>
+    <string name="new_user_button">Create New User</string>
+    <string name="force_db_button">Force DB Refresh</string>
+    <string name="switch_user_button">Switch Current User</string>
+    <string name="title_activity_new_user">New User</string>
+    <string name="title_activity_switch_user">Switch User</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="new_user_explantion">Use the following auto-generated user name or provide your own.</string>
+    <string name="new_user_name_hint">Enter your own name</string>
+    <string name="new_user_tags_explanation">Select applicable tags for user.</string>
+    <string name="new_user_switch_business">business</string>
+    <string name="new_user_switch_holidays">holidays</string>
+    <string name="new_user_switch_family">family</string>
+    <string name="switch_testmode_text">TestMode</string>
+    <string name="button_updateconfig_text">Update Config</string>
+    <string name="switch_user_title">Select User</string>
+    <string name="title_activity_show_uri">Select content URI</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_content_widget">Content Widgets</string>
+    <string name="ui_mode_fullscreen">Fullscreen</string>
+    <string name="ui_mode_fragment">Fragment</string>
+    <string name="ui_mode_widget">Content Widget</string>
+
+</resources>
