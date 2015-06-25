@@ -39,12 +39,16 @@ public class SegmentedRadioGroup extends RadioGroup {
     private void changeButtonsImages(){
         int count = super.getChildCount();
 
-        if(count > 1){
+        if(count > 2){
             super.getChildAt(0).setBackgroundResource(com.zumobi.android.zbimsampleapp.R.drawable.segment_radio_left);
             for(int i=1; i < count-1; i++){
                 super.getChildAt(i).setBackgroundResource(com.zumobi.android.zbimsampleapp.R.drawable.segment_radio_middle);
             }
             super.getChildAt(count-1).setBackgroundResource(com.zumobi.android.zbimsampleapp.R.drawable.segment_radio_right);
+        }
+        else if (count == 2){
+            super.getChildAt(0).setBackgroundResource(com.zumobi.android.zbimsampleapp.R.drawable.segment_radio_left);
+            super.getChildAt(1).setBackgroundResource(com.zumobi.android.zbimsampleapp.R.drawable.segment_radio_right);
         }
 //        else if (count == 1){
 //            super.getChildAt(0).setBackgroundResource(com.zumobi.android.zbimsampleapp.R.drawable.segment_button);

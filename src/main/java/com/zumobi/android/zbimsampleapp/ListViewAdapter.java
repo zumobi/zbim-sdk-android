@@ -32,29 +32,7 @@ public class ListViewAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-//        ViewHolder viewHolder;
-//
-//        if (convertView == null) {
-//            // instantiate a ViewHolder object
-//            LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
-//            convertView = inflater.inflate(R.layout.content_widget_default, parent, false);
-//            viewHolder = new ViewHolder();
-//            viewHolder.mImageView = (ImageView)convertView.findViewById(R.id.imageView);
-//            viewHolder.mTextViewTitle = (TextView)convertView.findViewById(R.id.textview_title);
-//            viewHolder.mTextViewCaption = (TextView)convertView.findViewById(R.id.textview_caption);
-//            convertView.setTag(viewHolder);
-//        } else {
-//            // re-use a ViewHolder object
-//            viewHolder = (ViewHolder) convertView.getTag();
-//
-//        }
         return mViewsData[position];
     }
 
-//    // ViewHolder pattern
-//    static class ViewHolder {
-//        public ImageView mImageView;
-//        public TextView mTextViewTitle;
-//        public TextView mTextViewCaption;
-//    }
 }

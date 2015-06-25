@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -18,8 +17,10 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.zumobi.zbim.ContentFragment;
 import com.zumobi.zbim.ContentHubFragment;
 import com.zumobi.zbim.ZBiM;
+import com.zumobi.zbim.interfaces.ContentWidgetDelegate;
 import com.zumobi.zbim.listeners.OnPageActionListener;
 import com.zumobi.zbim.listeners.OnScrollListener;
 
@@ -27,12 +28,11 @@ import org.xwalk.core.XWalkView;
 
 import java.io.Serializable;
 
-public class ActivityFragmentHub extends FragmentActivity implements OnClickListener, OnPageActionListener, OnScrollListener {
+public class ActivityFragmentHub extends FragmentActivity implements OnClickListener, OnPageActionListener, OnScrollListener, ContentWidgetDelegate {
 
 	// Constants
 	private final String TAG = this.getClass().getSimpleName();
-    public final static String EXTRA_INTENT_URI = "ActivityFragmentHub.INTENT_EXTRA.URI";
-	
+
 	// Member Variables
     private ToggleButton mToggleButton;
 
@@ -85,21 +85,14 @@ public class ActivityFragmentHub extends FragmentActivity implements OnClickList
             // Create the other fragment
             mEmbeddedWebViewFragment = new EmbeddedWebViewFragment();
 
-            // if a URI is passed-in, use it as a launch-pad for the contenthub
-            String strURI = null;
-            Bundle extras = getIntent().getExtras();
-            if (extras != null) {
-                strURI = extras.getString(EXTRA_INTENT_URI);
+            // if there exists a stored Content Widget, then show that article/channel/hub fragment, otherwise show the default hub
+            ContentFragment contentWidget = ZBiM.getInstance(this).getSelectedContentWidget();
+            if (contentWidget == null) {
+                attachFragment(null);
+            } else {
+                ZBiM.getInstance(this).setContentWidgetDelegate(this);
+                contentWidget.performAction();
             }
-
-            // the fragment must be returned by ZBiM
-            mContentHubFragment = ZBiM.getInstance(this).getContentHubFragment(strURI);//NOTE: a specific URI can be passed here, or null to use default hub
-            mContentHubFragment.setOnPageActionListener(this);
-            mContentHubFragment.setOnScrollListener(this);
-
-            // Add the fragment to the 'fragment_container' FrameLayout
-            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, (Fragment)mContentHubFragment).commit();
-            getSupportFragmentManager().executePendingTransactions();
 
         }
 
@@ -138,6 +131,16 @@ public class ActivityFragmentHub extends FragmentActivity implements OnClickList
 			finish();
 		}
 	}
+
+    @Override
+    protected void onDestroy() {
+
+        // Important: this is required cleanup
+        ZBiM.getInstance(this).setContentWidgetDelegate(null);
+        ZBiM.getInstance(this).selectContentWidget(null);
+
+        super.onDestroy();
+    }
 
     /**
 	 * OnPageActionListener Interface implementation
@@ -281,4 +284,19 @@ public class ActivityFragmentHub extends FragmentActivity implements OnClickList
         }
 
     };
+
+    /*
+    Concrete implementation of ContentWidgetInterface
+     */
+    @Override
+    public void attachFragment(String strUri) {
+        // the fragment must be returned by ZBiM
+        mContentHubFragment = ZBiM.getInstance(this).getContentHubFragment(strUri);//NOTE: a specific URI can be passed here, or null to use default hub
+        mContentHubFragment.setOnPageActionListener(this);
+        mContentHubFragment.setOnScrollListener(this);
+
+        // Add the fragment to the 'fragment_container' FrameLayout
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mContentHubFragment).commit();
+        getSupportFragmentManager().executePendingTransactions();
+    }
 }

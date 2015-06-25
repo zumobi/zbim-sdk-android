@@ -31,13 +31,14 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private enum ScreenMode {FULLSCREEN, FRAGMENT, COMPONENT}
+    public enum ScreenMode {FULLSCREEN, FRAGMENT}
 
 	private Button mShowContentHubButton;
+    private Button mShowContentWidgetButton;
 	private Button mCreateNewUserButton;
 	private Button mSwitchUserButton;
     private Switch mThemeSwitch;
-    private ScreenMode mScreenMode = ScreenMode.FULLSCREEN;//default set in XML also
+    static public ScreenMode mScreenMode = ScreenMode.FULLSCREEN;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,10 +75,17 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
         if (mShowContentHubButton != null) {
         	mShowContentHubButton.setOnClickListener(this);
         }
+
+        mShowContentWidgetButton = (Button)findViewById(R.id.buttonShowContentWidgets);
+        if (mShowContentWidgetButton != null) {
+            mShowContentWidgetButton.setOnClickListener(this);
+        }
+
         mCreateNewUserButton = (Button)findViewById(R.id.buttonCreateNewUser);
         if (mCreateNewUserButton != null) {
             mCreateNewUserButton.setOnClickListener(this);
         }
+
         mSwitchUserButton = (Button)findViewById(R.id.buttonSwitchUser);
         if (mSwitchUserButton != null) {
             mSwitchUserButton.setOnClickListener(this);
@@ -89,6 +97,11 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
         // set up radio group that selects UI mode
         SegmentedRadioGroup radioUImode = (SegmentedRadioGroup)findViewById(R.id.segment_mode_group);
         radioUImode.setOnCheckedChangeListener(this);
+
+        if (mScreenMode == ScreenMode.FULLSCREEN)
+            radioUImode.check(R.id.button_one);
+        else
+            radioUImode.check(R.id.button_two);
     }
 
 
@@ -139,9 +152,9 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
 
     @Override
     public void onClick(View view) {
-    	
-    	if (view == mShowContentHubButton) {
 
+        // required initialization for fragment or fullscreen content hubs
+        if ((view == mShowContentWidgetButton) || (view == mShowContentHubButton)) {
             // REQUIRED: set the Color Scheme
             if (mThemeSwitch.isChecked()) {
                 ZBiM.getInstance(this).setColorScheme(ZBiMColorScheme.Dark);
@@ -157,7 +170,18 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
             else {
                 ZBiM.getInstance(this).setContentHubBackgroundColor(Color.WHITE);
             }
+        }
 
+
+        if (view == mShowContentWidgetButton) {
+            Intent intent = new Intent(this, ContentWidgetListActivity.class);
+            startActivity(intent);
+            //Note: the mScreenMode is tested from within ContentWidgetListActivity
+            return;
+        }
+
+
+    	if (view == mShowContentHubButton) {
 
             if(mScreenMode == ScreenMode.FULLSCREEN) {
                 try {
@@ -198,9 +222,6 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
             } else if(mScreenMode == ScreenMode.FRAGMENT) {
                 Intent intent = new Intent(this, ActivityFragmentHub.class);
                 startActivity(intent);
-            } else if(mScreenMode == ScreenMode.COMPONENT) {
-                Intent intent = new Intent(this, ContentWidgetActivity.class);
-                startActivity(intent);
             }
 
     		return;
@@ -210,7 +231,6 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
         if (view == mCreateNewUserButton) {
             Intent intent = new Intent(this, NewUserActivity.class);
             startActivity(intent);
-
             return;
         }
 
@@ -267,8 +287,6 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
         } else if (checkedId == R.id.button_two) {
             mScreenMode = ScreenMode.FRAGMENT;
 
-        } else if (checkedId == R.id.button_three) {
-            mScreenMode = ScreenMode.COMPONENT;
         }
     }
 }

@@ -1,13 +1,8 @@
-// for Multidex information, see https://developer.android.com/tools/building/multidex.html
 buildscript {
     repositories {
         jcenter()
-        maven {
-            // The following is the official XWALK Maven repo, but until
-            // https://crosswalk-project.org/jira/browse/XWALK-4255 is fixed
-            // we will be using a private build from Zumobi's private Maven repo.
-            // url 'https://download.01.org/crosswalk/releases/crosswalk/android/maven2'
-            url 'http://perforce.corp.zumobi.com:8081/nexus/content/groups/public/'
+        flatDir {
+            dirs 'libs'
         }
     }
     dependencies {
@@ -18,12 +13,8 @@ apply plugin: 'com.android.application'
 
 repositories {
     jcenter()
-    maven {
-        // The following is the official XWALK Maven repo, but until
-        // https://crosswalk-project.org/jira/browse/XWALK-4255 is fixed
-        // we will be using a private build from Zumobi's private Maven repo.
-        // url 'https://download.01.org/crosswalk/releases/crosswalk/android/maven2'
-        url 'http://perforce.corp.zumobi.com:8081/nexus/content/groups/public/'
+    flatDir {
+        dirs 'libs'
     }
 }
 
@@ -61,10 +52,16 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.zumobi.zbim:zbim-sdk-android:1.2.0.31.RELEASE-SNAPSHOT' //This builds against a specific build from the repo.
+    compile(name:'zbim-sdk-android-1.2.0.32.RELEASE-20150625.010206-1', ext:'aar')
+    compile(name:'xwalk_core_library', ext:'aar')
     compile 'com.google.code.gson:gson:2.3'
-    // Needed in the Sample app to overcome the 64K Methods limit
+    compile 'com.google.android.gms:play-services:6.5.87'
+    compile 'com.amazonaws:aws-android-sdk-sqs:2.2.1'
+    compile 'org.apache.httpcomponents:httpmime:4.1'
+    compile 'oauth.signpost:signpost-core:1.2.1.2'
+    compile 'org.twitter4j:twitter4j-core:3.0.5'
+    compile 'com.squareup.okhttp:okhttp:2.3.0'
+    compile 'com.arcao:slf4j-timber:1.5'
     compile 'com.android.support:multidex:1.0.0'
 }
 

@@ -3,6 +3,7 @@
 
     <string name="app_name">Zbi Sample App</string>
     <string name="showContentHubButtonLabel">Show Content Hub</string>
+    <string name="showContentWidgetButtonLabel">Show Content Widgets</string>
     <string name="showContentHubInFragmentButtonLabel">Show Content Hub in Fragment</string>
     <string name="txt_menu_showuripage">Show URI Entrypoints</string>
     <string name="button_text_back">BACK</string>
@@ -16,7 +17,7 @@
     <string name="switch_user_button">Switch Current User</string>
     <string name="title_activity_new_user">New User</string>
     <string name="title_activity_switch_user">Switch User</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_content_hub">Content Hub</string>
     <string name="new_user_explantion">Use the following auto-generated user name or provide your own.</string>
     <string name="new_user_name_hint">Enter your own name</string>
     <string name="new_user_tags_explanation">Select applicable tags for user.</string>
