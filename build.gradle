@@ -52,7 +52,7 @@ android {
 }
 
 dependencies {
-    compile(name:'zbim-sdk-android-1.2.0.32.RELEASE-20150625.010206-1', ext:'aar')
+    compile(name:'zbim-sdk-android-1.2.0.37.RELEASE-20150625.221302-1', ext:'aar')
     compile(name:'xwalk_core_library', ext:'aar')
     compile 'com.google.code.gson:gson:2.3'
     compile 'com.google.android.gms:play-services:6.5.87'

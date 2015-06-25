@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.zumobi.zbim.ContentFragment;
 import com.zumobi.zbim.ContentFragmentQueryResultListener;
@@ -16,7 +17,8 @@ public class ContentWidgetListActivity extends Activity implements ContentFragme
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private ListView mListViewArticleLinks;
+    private ListView mListViewContentWidgets;
+    private ProgressBar mProgressBarLoading;
     private ContentFragment[] mContentFragments;
     private ZBiM mZBiM;
 
@@ -28,39 +30,65 @@ public class ContentWidgetListActivity extends Activity implements ContentFragme
         setContentView(R.layout.activity_content_widget_list);
 
         // get references to UI elements
-        mListViewArticleLinks = (ListView)findViewById(R.id.listView_article_links);
+        mListViewContentWidgets = (ListView)findViewById(R.id.listView_article_links);
+        mProgressBarLoading = (ProgressBar) findViewById(R.id.progress_loading);
 
         // generate the list of Content Widgets - the ContentFragmentQueryResultListener will receive results
         mZBiM = ZBiM.getInstance(this);
-        mZBiM.generateContentWidgets("article", 0, null, false, this);
+        mZBiM.generateContentWidgets("article", 0, null, true, ContentWidgetListActivity.this);
     }
 
+
     /*
-    Concrete implementation of ContentFragmentQueryResultListener interface
+        Concrete implementation of ContentFragmentQueryResultListener interface
+        NOTE: code in here runs on the UI Thread
     */
     @Override
     public void onSuccess(ContentFragment[] contentFragments) {
 
-        mContentFragments = contentFragments;//maintain reference for click event
+        //maintain reference to data for possible click event later on
+        mContentFragments = contentFragments;
 
-        // Generate an array of just views for use with the Listview Adapter
-        View[] arrayViews = new View[contentFragments.length];
+        // process the widgets data - but do not do this on the UI thread otherwise UI performance will suffer
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
 
-        int index = 0;
-        for(ContentFragment contentWidget : contentFragments) {
-            arrayViews[index++] = contentWidget.getContentWidget();
-        }
+                // Generate an array of just views for use with the Listview Adapter
+                final View[] arrayViews = new View[mContentFragments.length];
 
-        // now that data exists, instantiate the Listview Adapter
-        final ListViewAdapter listViewAdapter = new ListViewAdapter(arrayViews);
-        mListViewArticleLinks.setAdapter(listViewAdapter);
-        mListViewArticleLinks.setOnItemClickListener(this);
+                int index = 0;
+                for(ContentFragment contentWidget : mContentFragments) {
+                    arrayViews[index++] = contentWidget.getContentWidget();
+                }
+
+                // Data processing is finished - show it all, but from UI thread
+                ContentWidgetListActivity.this.runOnUiThread(new Runnable() {
+                    public void run() {
+                        // now that data exists, instantiate the Listview Adapter
+                        final ListViewAdapter listViewAdapter = new ListViewAdapter(ContentWidgetListActivity.this, arrayViews);
+                        mListViewContentWidgets.setAdapter(listViewAdapter);
+                        mListViewContentWidgets.setOnItemClickListener(ContentWidgetListActivity.this);
+
+                        // fixes Android bug https://code.google.com/p/android/issues/detail?id=159739
+                        mListViewContentWidgets.setOverScrollMode(View.OVER_SCROLL_NEVER);
+
+                        // about to show the widgets in the listview - hide the progress bar
+                        mProgressBarLoading.setVisibility(View.INVISIBLE);
+                    }
+                });
+
+            }
+        };
+        new Thread(runnable).start();
     }
+
 
     @Override
     public void onFailure() {
 
     }
+
 
     /*
     Concrete implementation of OnItemClickListener
