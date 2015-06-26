@@ -44,7 +44,6 @@ public class ActivityFragmentHub extends FragmentActivity implements OnClickList
     private boolean mHideToolBar;
     private boolean mShowToolBar;
     private int mStartingX;
-    private ViewGroup mFragmentContainer;
     private boolean mShowingToolBar;
 
     @Override
@@ -54,11 +53,10 @@ public class ActivityFragmentHub extends FragmentActivity implements OnClickList
 
         mButtonContainer = (ViewGroup) findViewById(R.id.button_container);
         mButtonContainer.animate().setListener(mButtonContainerAnimationListener);
-        mFragmentContainer = (ViewGroup) findViewById(R.id.fragment_container);
 
         mToggleButton = (ToggleButton) findViewById(R.id.fragment_container_toggle);
         mToggleButton.setOnClickListener(this);
-        mToggleButton.setChecked(true);
+        mToggleButton.setChecked(false);
 
         // get references to buttons in the button bar below the content hub fragment
 		mButtonBack = (Button) findViewById(R.id.btn_back);
@@ -155,8 +153,7 @@ public class ActivityFragmentHub extends FragmentActivity implements OnClickList
 		Log.i(TAG,"onPageFinished");
 		
 		final boolean canGoBack = view.getNavigationHistory().canGoBack();
-		final boolean canGoForward = view.getNavigationHistory().canGoForward();
-		
+
 		// update the UI on the UI thread
 		this.runOnUiThread(new Runnable() {
 			@Override
@@ -254,21 +251,9 @@ public class ActivityFragmentHub extends FragmentActivity implements OnClickList
             if(!mShowingToolBar) {
                 mButtonContainer.setVisibility(View.GONE);
                 mShowingToolBar = false;
-                /*int height = mButtonContainer.getLayoutParams().height;
-
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams()
-                mButtonContainer.setLayoutParams().setMargins();
-                mButtonContainer.requestLayout();
-                mFragmentContainer.requestLayout();*/
             }
             else if(mButtonContainer.getVisibility() != View.VISIBLE) {
                 mButtonContainer.setVisibility(View.VISIBLE);
-                /*int height = mButtonContainer.getLayoutParams().height;
-
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams()
-                mButtonContainer.setLayoutParams().setMargins();
-                mButtonContainer.requestLayout();
-                mFragmentContainer.requestLayout();*/
             }
 
         }

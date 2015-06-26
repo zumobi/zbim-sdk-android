@@ -15,8 +15,6 @@ import com.zumobi.zbim.ZBiM;
 
 public class ContentWidgetListActivity extends Activity implements ContentFragmentQueryResultListener, AdapterView.OnItemClickListener {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
-
     private ListView mListViewContentWidgets;
     private ProgressBar mProgressBarLoading;
     private ContentFragment[] mContentFragments;
@@ -40,8 +38,8 @@ public class ContentWidgetListActivity extends Activity implements ContentFragme
 
 
     /*
-        Concrete implementation of ContentFragmentQueryResultListener interface
-        NOTE: code in here runs on the UI Thread
+    Concrete implementation of ContentFragmentQueryResultListener interface
+    NOTE: code in here runs on the UI Thread
     */
     @Override
     public void onSuccess(ContentFragment[] contentFragments) {
@@ -95,6 +93,13 @@ public class ContentWidgetListActivity extends Activity implements ContentFragme
      */
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+        // test if clicked view is a content widget or 3rd party view
+        if (position % 2 == 0) {
+            position = position/2;
+        } else {
+            return; // 3rd party handles the click event for their content
+        }
 
         // if full screen is enabled show as full screen, otherwise fragment
         if (MainActivity.mScreenMode == MainActivity.ScreenMode.FULLSCREEN) {

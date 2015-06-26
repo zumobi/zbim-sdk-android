@@ -7,7 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 /**
- * Adapter to show ContentWidget's
+ * Adapter to show ContentWidgets
+ * @see ContentWidgetListActivity
  */
 public class ListViewAdapter extends BaseAdapter {
 

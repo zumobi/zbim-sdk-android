@@ -27,6 +27,9 @@ import com.zumobi.zbim.exceptions.ZBiMStateException;
 
 import org.xwalk.core.XWalkPreferences;
 
+/**
+ * The Launch activity that is parent of all other views in this project
+ */
 public class MainActivity extends Activity implements OnClickListener, OnCheckedChangeListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -61,7 +64,7 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
 
         // Whitelist the scheme
         ZBiM.getInstance(this).whitelistScheme("zbimsampleapp");//required
-        ZBiM.getInstance(this).whitelistScheme("target");//example for Target
+        // ZBiM.getInstance(this).whitelistScheme("your_company_scheme");//optional additional schemes
 
         // Set Logger
         ZBiM.getInstance(this).setLoggingHandler(new ZBiMSDKLogger());
@@ -199,7 +202,9 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
                         PackageInfo packageInfo = getPackageManager().getPackageInfo(packageName, 0);
                         final int iconid = packageInfo.applicationInfo.icon;
                         alertbuilder.setIcon(iconid);
-                    } catch (android.content.pm.PackageManager.NameNotFoundException e) {}
+                    } catch (android.content.pm.PackageManager.NameNotFoundException e) {
+                        Log.d(TAG, "Failed to obtain packageName and packageInfo");
+                    }
 
                     alertbuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
                         @Override
@@ -212,11 +217,13 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
 
                     if (ex.getErrorType() == ZBiMErrorType.SDKDisabledState){
                         // Typically no action taken here. On next App launch, we will try reset and can try again.
+                        Log.d(TAG, "SDK is disabled");
                     }
                     else if (ex.getErrorType() == ZBiMErrorType.RemovedFromPilotProgram || ex.getErrorType() == ZBiMErrorType.DeniedAccessToPilotProgram){
                         // The user has been removed from the Pilot Program, the app can decide to disable or remove the button
                         // On next App launch, we will try again or next DB download.
                         // mShowContentHubButton.setEnabled(false);
+                        Log.d(TAG, "Removed from Pilot Program");
                     }
                 }
             } else if(mScreenMode == ScreenMode.FRAGMENT) {
@@ -276,8 +283,8 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
 
     /**
      * Implementation of OnCheckedChangeListener interface
-     * @param group
-     * @param checkedId
+     * @param group RadioGroup
+     * @param checkedId ID of button
      */
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {

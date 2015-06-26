@@ -9,10 +9,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
+
 import com.zumobi.zbim.ZBiM;
 
 import java.util.ArrayList;
-import java.util.Vector;
 
 
 public class NewUserActivity extends Activity implements View.OnClickListener {
@@ -23,17 +23,18 @@ public class NewUserActivity extends Activity implements View.OnClickListener {
     private Switch mBusinessSwitch;
     private Switch mHolidaysSwitch;
     private Switch mFamilySwitch;
-    private Button mCreateNewUserButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_user);
 
-        mCreateNewUserButton = (Button)findViewById(R.id.buttonCreateNewUser);
-        if (mCreateNewUserButton != null) {
-            mCreateNewUserButton.setOnClickListener(this);
+        Button createNewUserButton;
+        createNewUserButton = (Button)findViewById(R.id.buttonCreateNewUser);
+        if (createNewUserButton != null) {
+            createNewUserButton.setOnClickListener(this);
         }
+
         mUserIdTextView = (EditText)findViewById(R.id.textViewUserId);
         mUserIdTextView.setText(ZBiM.getInstance(this).generateDefaultUserID());
 
