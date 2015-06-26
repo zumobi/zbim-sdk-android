@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#03a9f4</color>
+    <color name="primary_dark">#0288d1</color>
+    <color name="accent">#b3e5fc</color>
+    <color name="rounded_shape_stroke">#ffcccccc</color>
+    <color name="button_text_color">#E45925</color>
+</resources>

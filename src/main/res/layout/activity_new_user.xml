@@ -1,0 +1,59 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                tools:context="com.zumobi.android.zbimsampleapp.NewUserActivity">
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true" android:layout_alignParentStart="true"
+            android:id="@+id/linearLayout2" android:layout_marginLeft="5dp" android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp" android:layout_above="@+id/buttonCreateNewUser">
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/new_user_explantion"
+                android:id="@+id/textViewExplanation" android:layout_margin="10dp" android:textSize="@dimen/new_user_explanation_text_size"/>
+        <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/textViewUserId" android:layout_marginLeft="5dp" android:layout_marginRight="5dp"
+                android:padding="5dp" android:editable="true" android:hint="@string/new_user_name_hint"
+                android:singleLine="false"/>
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/new_user_tags_explanation"
+                android:id="@+id/textViewTagsExplanation" android:layout_marginTop="40dp" android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" android:layout_marginBottom="10dp" android:textSize="@dimen/new_user_explanation_text_size"/>
+        <Switch
+                android:layout_width="243dp"
+                android:layout_height="wrap_content"
+                android:text="@string/new_user_switch_business"
+                android:id="@+id/switchBusiness" android:layout_marginLeft="15dp" android:paddingTop="10dp"
+                android:paddingBottom="10dp"/>
+        <Switch android:layout_width="243dp" android:layout_height="wrap_content" android:text="@string/new_user_switch_holidays"
+                android:id="@+id/switchHolidays" android:layout_marginLeft="15dp" android:paddingTop="10dp"
+                android:paddingBottom="10dp"/>
+        <Switch android:layout_width="243dp" android:layout_height="wrap_content" android:text="@string/new_user_switch_family"
+                android:id="@+id/switchFamily" android:layout_marginLeft="15dp" android:paddingTop="10dp"
+                android:paddingBottom="10dp"/>
+    </LinearLayout>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/new_user_button"
+            android:id="@+id/buttonCreateNewUser"
+            android:background="@drawable/rounded_shape" android:textColor="@android:color/white"
+            android:layout_alignParentBottom="true"
+            android:layout_alignLeft="@+id/linearLayout2" android:layout_alignStart="@+id/linearLayout2"
+            android:layout_alignRight="@+id/linearLayout2" android:layout_alignEnd="@+id/linearLayout2"
+            android:layout_marginBottom="20dp"/>
+</RelativeLayout>

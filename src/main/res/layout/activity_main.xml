@@ -1,0 +1,119 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.zumobi.android.zbimsampleapp.MainActivity" >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="false"
+        android:layout_alignParentEnd="true"
+        android:weightSum="1"
+        android:layout_marginTop="30dp"
+        android:id="@+id/ll_top_button_container"
+        android:layout_centerHorizontal="true">
+
+        <Button
+            android:id="@+id/buttonShowContentHub"
+            android:layout_width="270dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:text="@string/showContentHubButtonLabel"
+            android:textColor="@android:color/white"
+            android:background="@drawable/rounded_shape"/>
+
+        <Button
+            android:id="@+id/buttonShowContentWidgets"
+            android:layout_width="270dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:text="@string/showContentWidgetButtonLabel"
+            android:textColor="@android:color/white"
+            android:background="@drawable/rounded_shape"/>
+
+        <!-- NOTE: checkedButton is set programmatically -->
+        <com.zumobi.android.zbimsampleapp.customViews.SegmentedRadioGroup
+            android:layout_width="270dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:orientation="horizontal"
+            android:id="@+id/segment_mode_group"
+            android:weightSum="2">
+
+            <RadioButton
+                android:id="@+id/button_one"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="40dp"
+                android:minHeight="33dp"
+                android:text="@string/ui_mode_fullscreen"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:button="@null"
+                android:gravity="center"
+                android:textColor="@color/radio_colors"
+                android:layout_weight="1"/>
+            <RadioButton
+                android:id="@+id/button_two"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="40dp"
+                android:minHeight="33dp"
+                android:text="@string/ui_mode_fragment"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:button="@null"
+                android:gravity="center"
+                android:textColor="@color/radio_colors"
+                android:layout_weight="1"/>
+        </com.zumobi.android.zbimsampleapp.customViews.SegmentedRadioGroup>
+
+        <Switch android:layout_width="270dp"
+            android:layout_height="wrap_content"
+            android:text="@string/Theme_switch"
+            android:id="@+id/switchTheme"
+            android:checked="true"
+            android:layout_gravity="center_horizontal"
+            android:padding="10dp"
+            android:background="@drawable/switch_background"
+            android:layout_margin="5dp"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:weightSum="1"
+        android:id="@+id/ll_lower_button_container">
+
+        <Button
+            android:layout_width="271dp"
+            android:layout_height="wrap_content"
+            android:text="@string/new_user_button"
+            android:id="@+id/buttonCreateNewUser"
+            android:textColor="@color/button_text_color"
+            android:background="#00ffffff"/>
+
+        <Button android:layout_width="271dp"
+            android:layout_height="wrap_content"
+            android:text="@string/switch_user_button"
+            android:id="@+id/buttonSwitchUser"
+            android:textColor="@color/button_text_color"
+            android:background="#00ffffff"/>
+
+    </LinearLayout>
+
+</RelativeLayout>
