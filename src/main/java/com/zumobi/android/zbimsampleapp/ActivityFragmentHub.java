@@ -17,7 +17,7 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.zumobi.zbim.ContentFragment;
+import com.zumobi.zbim.ContentWidget;
 import com.zumobi.zbim.ContentHubFragment;
 import com.zumobi.zbim.ZBiM;
 import com.zumobi.zbim.interfaces.ContentWidgetDelegate;
@@ -84,7 +84,7 @@ public class ActivityFragmentHub extends FragmentActivity implements OnClickList
             mEmbeddedWebViewFragment = new EmbeddedWebViewFragment();
 
             // if there exists a stored Content Widget, then show that article/channel/hub fragment, otherwise show the default hub
-            ContentFragment contentWidget = ZBiM.getInstance(this).getSelectedContentWidget();
+            ContentWidget contentWidget = ZBiM.getInstance(this).getSelectedContentWidget();
             if (contentWidget == null) {
                 attachFragment(null);
             } else {
@@ -271,7 +271,7 @@ public class ActivityFragmentHub extends FragmentActivity implements OnClickList
     };
 
     /*
-    Concrete implementation of ContentWidgetInterface
+    Concrete implementation of ContentWidgetDelegate
      */
     @Override
     public void attachFragment(String strUri) {

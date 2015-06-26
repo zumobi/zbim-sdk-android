@@ -88,7 +88,7 @@ public class NewUserActivity extends Activity implements View.OnClickListener {
         }
 
         try {
-            ZBiM.getInstance(this).createUser(userId, tags);
+            ZBiM.getInstance(this).createUser(userId, tags.toArray(new String[tags.size()]));
         }
         catch (UnsupportedOperationException uoe){
             Log.d(TAG, "Failed creating userId:" + userId + " with tags: " + tags.toString());

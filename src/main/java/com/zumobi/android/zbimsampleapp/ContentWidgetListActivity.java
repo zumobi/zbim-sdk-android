@@ -8,16 +8,16 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import com.zumobi.zbim.ContentFragment;
-import com.zumobi.zbim.ContentFragmentQueryResultListener;
+import com.zumobi.zbim.ContentWidget;
+import com.zumobi.zbim.ContentWidgetQueryResultListener;
 import com.zumobi.zbim.ZBiM;
 
 
-public class ContentWidgetListActivity extends Activity implements ContentFragmentQueryResultListener, AdapterView.OnItemClickListener {
+public class ContentWidgetListActivity extends Activity implements ContentWidgetQueryResultListener, AdapterView.OnItemClickListener {
 
     private ListView mListViewContentWidgets;
     private ProgressBar mProgressBarLoading;
-    private ContentFragment[] mContentFragments;
+    private ContentWidget[] mContentWidgets;
     private ZBiM mZBiM;
 
     @Override
@@ -42,10 +42,10 @@ public class ContentWidgetListActivity extends Activity implements ContentFragme
     NOTE: code in here runs on the UI Thread
     */
     @Override
-    public void onSuccess(ContentFragment[] contentFragments) {
+    public void onSuccess(ContentWidget[] contentWidgets) {
 
         //maintain reference to data for possible click event later on
-        mContentFragments = contentFragments;
+        mContentWidgets = contentWidgets;
 
         // process the widgets data - but do not do this on the UI thread otherwise UI performance will suffer
         Runnable runnable = new Runnable() {
@@ -53,10 +53,10 @@ public class ContentWidgetListActivity extends Activity implements ContentFragme
             public void run() {
 
                 // Generate an array of just views for use with the Listview Adapter
-                final View[] arrayViews = new View[mContentFragments.length];
+                final View[] arrayViews = new View[mContentWidgets.length];
 
                 int index = 0;
-                for(ContentFragment contentWidget : mContentFragments) {
+                for(ContentWidget contentWidget : mContentWidgets) {
                     arrayViews[index++] = contentWidget.getContentWidget();
                 }
 
@@ -105,12 +105,12 @@ public class ContentWidgetListActivity extends Activity implements ContentFragme
         if (MainActivity.mScreenMode == MainActivity.ScreenMode.FULLSCREEN) {
 
             // Launch full-screen activity defined in ZBiM
-            mContentFragments[position].performAction();
+            mContentWidgets[position].performAction();
         }
         else
         {
             // store the selected Content Widget
-            mZBiM.selectContentWidget(mContentFragments[position]);
+            mZBiM.selectContentWidget(mContentWidgets[position]);
 
             // Launch user-customizable fragment activity
             Intent intent = new Intent(this, ActivityFragmentHub.class);
