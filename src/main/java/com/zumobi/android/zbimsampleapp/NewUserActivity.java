@@ -36,7 +36,7 @@ public class NewUserActivity extends Activity implements View.OnClickListener {
         }
 
         mUserIdTextView = (EditText)findViewById(R.id.textViewUserId);
-        mUserIdTextView.setText(ZBiM.getInstance(this).generateDefaultUserID());
+        mUserIdTextView.setText(ZBiM.generateDefaultUserID());
 
         // Setup switches
         mBusinessSwitch = (Switch)findViewById(R.id.switchBusiness);
@@ -87,21 +87,14 @@ public class NewUserActivity extends Activity implements View.OnClickListener {
             tags.add(mFamilySwitch.getText().toString());
         }
 
-        try {
-            ZBiM.getInstance(this).createUser(userId, tags.toArray(new String[tags.size()]));
-        }
-        catch (UnsupportedOperationException uoe){
-            Log.d(TAG, "Failed creating userId:" + userId + " with tags: " + tags.toString());
-            return;
-        }
+        ZBiM.createUser(userId, tags.toArray(new String[tags.size()]));
 
         try {
-            ZBiM.getInstance(this).setActiveUser(userId);
+            ZBiM.setActiveUser(userId);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         this.finish();
-
     }
 }

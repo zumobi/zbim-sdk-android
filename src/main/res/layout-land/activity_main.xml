@@ -42,17 +42,17 @@
                 android:textColor="@android:color/white"
                 android:background="@drawable/rounded_shape"/>
 
+            <!-- NOTE: checkedButton is set programmatically -->
             <com.zumobi.android.zbimsampleapp.customViews.SegmentedRadioGroup
                 android:layout_width="270dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:orientation="horizontal"
-                android:id="@+id/segment_mode_group"
-                android:weightSum="2">
+                android:id="@+id/segment_mode_group">
 
                 <RadioButton
                     android:id="@+id/button_one"
-                    android:layout_width="wrap_content"
+                    android:layout_width="135dp"
                     android:layout_height="wrap_content"
                     android:minWidth="40dp"
                     android:minHeight="33dp"
@@ -64,7 +64,7 @@
                     android:layout_weight="1"/>
                 <RadioButton
                     android:id="@+id/button_two"
-                    android:layout_width="wrap_content"
+                    android:layout_width="135dp"
                     android:layout_height="wrap_content"
                     android:minWidth="40dp"
                     android:minHeight="33dp"
@@ -76,15 +76,38 @@
                     android:layout_weight="1"/>
             </com.zumobi.android.zbimsampleapp.customViews.SegmentedRadioGroup>
 
-            <Switch android:layout_width="270dp"
+            <!-- NOTE: checkedButton is set programmatically -->
+            <com.zumobi.android.zbimsampleapp.customViews.SegmentedRadioGroup
+                android:layout_width="270dp"
                 android:layout_height="wrap_content"
-                android:text="@string/Theme_switch"
-                android:id="@+id/switchTheme"
-                android:checked="true"
-                android:layout_gravity="center_horizontal"
-                android:padding="10dp"
-                android:background="@drawable/switch_background"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:orientation="horizontal"
+                android:id="@+id/segment_status_group">
+
+                <RadioButton
+                    android:id="@+id/button_default_status"
+                    android:layout_width="135dp"
+                    android:layout_height="wrap_content"
+                    android:minWidth="40dp"
+                    android:minHeight="33dp"
+                    android:text="@string/status_mode_default"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:textColor="@color/radio_colors"
+                    android:layout_weight="1"/>
+                <RadioButton
+                    android:id="@+id/button_custom_status"
+                    android:layout_width="135dp"
+                    android:layout_height="wrap_content"
+                    android:minWidth="40dp"
+                    android:minHeight="33dp"
+                    android:text="@string/status_mode_custom"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:textColor="@color/radio_colors"/>
+            </com.zumobi.android.zbimsampleapp.customViews.SegmentedRadioGroup>
 
         </LinearLayout>
 
@@ -110,6 +133,16 @@
                 android:id="@+id/buttonSwitchUser"
                 android:textColor="@color/button_text_color"
                 android:background="#00ffffff"/>
+
+            <Switch android:layout_width="271dp"
+                android:layout_height="wrap_content"
+                android:text="@string/Theme_switch"
+                android:id="@+id/switchTheme"
+                android:checked="true"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/switch_background"/>
 
         </LinearLayout>
 

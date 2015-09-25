@@ -3,6 +3,7 @@ package com.zumobi.android.zbimsampleapp;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -11,14 +12,16 @@ import android.widget.ProgressBar;
 import com.zumobi.zbim.ContentWidget;
 import com.zumobi.zbim.ContentWidgetQueryResultListener;
 import com.zumobi.zbim.ZBiM;
+import com.zumobi.zbim.exceptions.ZBiMStateException;
 
 
 public class ContentWidgetListActivity extends Activity implements ContentWidgetQueryResultListener, AdapterView.OnItemClickListener {
 
+    private final String TAG = this.getClass().getSimpleName();
+
     private ListView mListViewContentWidgets;
     private ProgressBar mProgressBarLoading;
     private ContentWidget[] mContentWidgets;
-    private ZBiM mZBiM;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +34,19 @@ public class ContentWidgetListActivity extends Activity implements ContentWidget
         mListViewContentWidgets = (ListView)findViewById(R.id.listView_article_links);
         mProgressBarLoading = (ProgressBar) findViewById(R.id.progress_loading);
 
-        // generate the list of Content Widgets - the ContentFragmentQueryResultListener will receive results
-        mZBiM = ZBiM.getInstance(this);
-        mZBiM.generateContentWidgets("article", 0, null, true, ContentWidgetListActivity.this);
+        try {
+            // generate the list of Content Widgets - the ContentFragmentQueryResultListener will receive results
+            ZBiM.generateContentWidgets("article", 0, null, true, ContentWidgetListActivity.this);
+        } catch (ZBiMStateException ex) {
+            Log.e(TAG, "Cannot get list of content widgets, due to incorrect SDK state: " + ex.getMessage());
+
+            Intent data = new Intent();
+            data.putExtra(MainActivity.ERROR_DIALOG_TITLE, ex.getUserTitle());
+            data.putExtra(MainActivity.ERROR_DIALOG_MESSAGE, ex.getUserMessage());
+
+            this.setResult(0, data);
+            this.finish();
+        }
     }
 
 
@@ -57,7 +70,7 @@ public class ContentWidgetListActivity extends Activity implements ContentWidget
 
                 int index = 0;
                 for(ContentWidget contentWidget : mContentWidgets) {
-                    arrayViews[index++] = contentWidget.getContentWidget();
+                    arrayViews[index++] = contentWidget;
                 }
 
                 // Data processing is finished - show it all, but from UI thread
@@ -104,18 +117,29 @@ public class ContentWidgetListActivity extends Activity implements ContentWidget
         // if full screen is enabled show as full screen, otherwise fragment
         if (MainActivity.mScreenMode == MainActivity.ScreenMode.FULLSCREEN) {
 
-            // Launch full-screen activity defined in ZBiM
-            mContentWidgets[position].performAction();
+            try {
+                // Launch full-screen activity defined in ZBiM
+                mContentWidgets[position].performAction();
+            } catch (ZBiMStateException ex) {
+                MainActivity.showError(this, ex.getUserTitle(), ex.getUserMessage());
+            }
         }
         else
         {
             // store the selected Content Widget
-            mZBiM.selectContentWidget(mContentWidgets[position]);
+            ZBiM.selectContentWidget(mContentWidgets[position]);
 
             // Launch user-customizable fragment activity
             Intent intent = new Intent(this, ActivityFragmentHub.class);
-            startActivity(intent);
+            startActivityForResult(intent, 0);
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (data != null) {
+            MainActivity.showError(this, data.getStringExtra(MainActivity.ERROR_DIALOG_TITLE), data.getStringExtra(MainActivity.ERROR_DIALOG_MESSAGE));
+        }
+    }
 }

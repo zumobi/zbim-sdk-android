@@ -6,6 +6,7 @@
     <string name="showContentWidgetButtonLabel">Show Content Widgets</string>
     <string name="showContentHubInFragmentButtonLabel">Show Content Hub in Fragment</string>
     <string name="txt_menu_showuripage">Show URI Entrypoints</string>
+    <string name="txt_menu_showstatusui">Custom Status UI</string>
     <string name="button_text_back">BACK</string>
     <string name="button_text_forward">FORWARD</string>
     <string name="button_text_close">CLOSE</string>
@@ -18,6 +19,7 @@
     <string name="title_activity_new_user">New User</string>
     <string name="title_activity_switch_user">Switch User</string>
     <string name="title_activity_content_hub">Content Hub</string>
+    <string name="title_activity_show_status_ui">Custom Status UI</string>
     <string name="new_user_explantion">Use the following auto-generated user name or provide your own.</string>
     <string name="new_user_name_hint">Enter your own name</string>
     <string name="new_user_tags_explanation">Select applicable tags for user.</string>
@@ -33,5 +35,10 @@
     <string name="ui_mode_fullscreen">Fullscreen</string>
     <string name="ui_mode_fragment">Fragment</string>
     <string name="ui_mode_widget">Content Widget</string>
+    <string name="status_mode_default">Default Status UI</string>
+    <string name="status_mode_custom">Custom Status UI</string>
+    <string name="label_show_error">Show Error Message</string>
+    <string name="label_show_dl_progress">Show Download Progress</string>
+    <string name="label_show_check_content">Show Checking Content</string>
 
 </resources>

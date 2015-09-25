@@ -48,7 +48,7 @@ public class ShowUriActivity extends Activity {
         SQLiteDatabase database = SQLiteDatabase.openDatabase(existingDBFullPath, null, SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
 
         // 2) collect the data
-        String sqlQuery = "SELECT title, uri FROM resources WHERE resource_type='hub' OR resource_type='article' OR resource_type='channel' ORDER BY title ASC";
+        String sqlQuery = "SELECT title, uri FROM resources WHERE (resource_type='hub' OR resource_type='article' OR resource_type='channel') AND length(content) > 0 AND length(title) > 0 ORDER BY position ASC";
         Cursor cursor = database.rawQuery(sqlQuery, null);
 
         while (cursor.moveToNext()) {
@@ -73,7 +73,7 @@ public class ShowUriActivity extends Activity {
 
                 final String strUri = mArrayListUris.get(position);
                 try {
-                    ZBiM.getInstance(getApplicationContext()).launchContentHubActivity(strUri);
+                    ZBiM.launchContentHubActivity(strUri);
                 } catch (ZBiMStateException ex) {
                     Toast.makeText(getApplicationContext(), "Error Launching Contenthub - see logcat", Toast.LENGTH_LONG).show();
                     logger.error("Exception {}", ex.getMessage());

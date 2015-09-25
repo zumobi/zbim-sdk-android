@@ -36,8 +36,7 @@ public class SwitchUserActivity extends Activity implements View.OnClickListener
         mCloseButton.setOnClickListener(this);
 
         // collect data and put it in listview
-        ArrayList<String> useridarray = ZBiM.getInstance(this).getUserIDs();
-        ArrayAdapter<String> itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, useridarray);
+        ArrayAdapter<String> itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ZBiM.getUserIDs());
         mListView.setAdapter(itemsAdapter);
         mListView.setOnItemClickListener(this);
     }
@@ -56,14 +55,7 @@ public class SwitchUserActivity extends Activity implements View.OnClickListener
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         final String strUserID = (String) parent.getItemAtPosition(position);
 
-        try {
-            ZBiM.getInstance(this).setActiveUser(strUserID);
-            Toast.makeText(this, "Switched to user "+strUserID, Toast.LENGTH_LONG).show();
-        } catch (ZBiMStateException e) {
-            Log.d("SwitchUserActivity", e.toString());
-            Toast.makeText(this, "Failed to switch to user "+strUserID, Toast.LENGTH_LONG).show();
-        }
-
-
+        ZBiM.setActiveUser(strUserID);
+        Toast.makeText(this, "Switched to user "+strUserID, Toast.LENGTH_LONG).show();
     }
 }

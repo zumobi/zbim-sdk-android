@@ -2,11 +2,11 @@ package com.zumobi.android.zbimsampleapp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -25,49 +25,45 @@ import com.zumobi.zbim.ZBiMColorScheme;
 import com.zumobi.zbim.exceptions.ZBiMErrorType;
 import com.zumobi.zbim.exceptions.ZBiMStateException;
 
-import org.xwalk.core.XWalkPreferences;
-
 /**
  * The Launch activity that is parent of all other views in this project
  */
 public class MainActivity extends Activity implements OnClickListener, OnCheckedChangeListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    public static final String ERROR_DIALOG_TITLE = "title";
+    public static final String ERROR_DIALOG_MESSAGE = "message";
 
     public enum ScreenMode {FULLSCREEN, FRAGMENT}
+    public enum StatusMode {DEFAULT, CUSTOM}
 
+    private Button mShowStatusDefaultButton;
+    private Button mShowStatusCustomButton;
 	private Button mShowContentHubButton;
     private Button mShowContentWidgetButton;
 	private Button mCreateNewUserButton;
 	private Button mSwitchUserButton;
     private Switch mThemeSwitch;
     static public ScreenMode mScreenMode = ScreenMode.FULLSCREEN;
+    static public StatusMode mStatusMode = StatusMode.DEFAULT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         // inflate UI
         setContentView(R.layout.activity_main);
         
         // get references to UI elements
         setupUIElements();
 
-        // Enable xwalkview debugging on debug builds
-        if (0 != ( getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE))
-        {
-            XWalkPreferences.setValue(XWalkPreferences.REMOTE_DEBUGGING, true);
-        }
-
-        // initialize ZBiM
-        ZBiM.getInstance(this);
-
-        // Whitelist the scheme
-        ZBiM.getInstance(this).whitelistScheme("zbimsampleapp");//required
-        // ZBiM.getInstance(this).whitelistScheme("your_company_scheme");//optional additional schemes
+        // Initialize ZBiM
+        ZBiM.start(getApplication());
 
         // Set Logger
-        ZBiM.getInstance(this).setLoggingHandler(new ZBiMSDKLogger());
+        ZBiM.setLoggingHandler(new ZBiMSDKLogger());
+
+        this.setupActiveUser();
     }
 
 
@@ -82,6 +78,16 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
         mShowContentWidgetButton = (Button)findViewById(R.id.buttonShowContentWidgets);
         if (mShowContentWidgetButton != null) {
             mShowContentWidgetButton.setOnClickListener(this);
+        }
+
+        mShowStatusDefaultButton = (Button)findViewById(R.id.button_default_status);
+        if (mShowStatusDefaultButton != null) {
+            mShowStatusDefaultButton.setOnClickListener(this);
+        }
+
+        mShowStatusCustomButton = (Button)findViewById(R.id.button_custom_status);
+        if (mShowStatusCustomButton != null) {
+            mShowStatusCustomButton.setOnClickListener(this);
         }
 
         mCreateNewUserButton = (Button)findViewById(R.id.buttonCreateNewUser);
@@ -105,53 +111,32 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
             radioUImode.check(R.id.button_one);
         else
             radioUImode.check(R.id.button_two);
+
+        // set up radio group that selects Status mode
+        SegmentedRadioGroup radioStatusmode = (SegmentedRadioGroup)findViewById(R.id.segment_status_group);
+        radioStatusmode.setOnCheckedChangeListener(this);
+
+        if (mStatusMode == StatusMode.DEFAULT)
+            radioStatusmode.check(R.id.button_default_status);
+        else
+            radioStatusmode.check(R.id.button_custom_status);
     }
 
+    private void setupActiveUser() {
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+        // If there is no active user already set, create a new
+        // one and set it as the current active user.
+        String userId = ZBiM.getActiveUser();
 
-        // Check for a current user
-        String userId = ZBiM.getInstance(this).getActiveUser();
-        if(userId == null){
+        if (userId == null){
+            // Have the SDK generate a user ID on the app's behalf.
+            userId = ZBiM.generateDefaultUserID();
+            ZBiM.createUser(userId, null);
 
-            // create a random user ID without tags
-            try {
-                userId = ZBiM.getInstance(this).generateDefaultUserID();
-                ZBiM.getInstance(this).createUser(userId, null);// by default, don't create tags
-            }
-            catch (UnsupportedOperationException uoe){
-                Log.d(TAG, "Failed creating userId:" + userId);
-
-                //disable button and grey it out without using a selector
-                mShowContentHubButton.setEnabled(false);
-                mShowContentHubButton.setAlpha(0.5f);
-                return;
-            }
-
-            // set new user to active user
-            try {
-                ZBiM.getInstance(this).setActiveUser(userId);
-            } catch (Exception e) {
-                e.printStackTrace();
-
-                //disable button and grey it out without using a selector
-                mShowContentHubButton.setEnabled(false);
-                mShowContentHubButton.setAlpha(0.5f);
-                return;
-            }
-
-            // success !
-            Toast.makeText(this, "No User existed. Automatically created one.", Toast.LENGTH_LONG).show();
-
-        } else {
-            // re-enable button in case there was an error before
-            mShowContentHubButton.setEnabled(true);
-            mShowContentHubButton.setAlpha(1.0f);
+            // Set the newly created user as the active user.
+            ZBiM.setActiveUser(userId);
         }
     }
-
 
     @Override
     public void onClick(View view) {
@@ -160,60 +145,37 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
         if ((view == mShowContentWidgetButton) || (view == mShowContentHubButton)) {
             // REQUIRED: set the Color Scheme
             if (mThemeSwitch.isChecked()) {
-                ZBiM.getInstance(this).setColorScheme(ZBiMColorScheme.Dark);
-            }
-            else {
-                ZBiM.getInstance(this).setColorScheme(ZBiMColorScheme.Light);
-            }
-
-            // OPTIONAL: set the background color of the content Hub
-            if (mThemeSwitch.isChecked()) {
-                ZBiM.getInstance(this).setContentHubBackgroundColor(Color.BLACK);
-            }
-            else {
-                ZBiM.getInstance(this).setContentHubBackgroundColor(Color.WHITE);
+                ZBiM.setColorScheme(ZBiMColorScheme.Dark);
+            } else {
+                ZBiM.setColorScheme(ZBiMColorScheme.Light);
             }
         }
 
+        if (view == mShowStatusCustomButton) {
+            // register callback
+            ZBiM.setContenthubStatusUiDelegate((ApplicationSample) getApplication());
+        }
+
+        if (view == mShowStatusDefaultButton) {
+            // unregister callback
+            ZBiM.setContenthubStatusUiDelegate(null);
+        }
 
         if (view == mShowContentWidgetButton) {
             Intent intent = new Intent(this, ContentWidgetListActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, 0);
             //Note: the mScreenMode is tested from within ContentWidgetListActivity
             return;
         }
-
 
     	if (view == mShowContentHubButton) {
 
             if(mScreenMode == ScreenMode.FULLSCREEN) {
                 try {
-                    ZBiM.getInstance(this).launchContentHubActivity();
+                    ZBiM.setReferrerTracking("FullScreen ContentHub").launchContentHubActivity();
                 } catch (ZBiMStateException ex) {
 
-                    // Create the Dialog ...
-                    AlertDialog.Builder alertbuilder = new AlertDialog.Builder(this);
-                    alertbuilder.setTitle(ex.getUserTitle());
-                    alertbuilder.setMessage(ex.getUserMessage());
-
-                    // Get app icon ID
-                    try {
-                        final String packageName = getPackageName();
-                        PackageInfo packageInfo = getPackageManager().getPackageInfo(packageName, 0);
-                        final int iconid = packageInfo.applicationInfo.icon;
-                        alertbuilder.setIcon(iconid);
-                    } catch (android.content.pm.PackageManager.NameNotFoundException e) {
-                        Log.d(TAG, "Failed to obtain packageName and packageInfo");
-                    }
-
-                    alertbuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    });
-
-                    alertbuilder.show();
+                    showError(this, ex.getUserTitle(), ex.getUserMessage());
 
                     if (ex.getErrorType() == ZBiMErrorType.SDKDisabledState){
                         // Typically no action taken here. On next App launch, we will try reset and can try again.
@@ -228,7 +190,7 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
                 }
             } else if(mScreenMode == ScreenMode.FRAGMENT) {
                 Intent intent = new Intent(this, ActivityFragmentHub.class);
-                startActivity(intent);
+                startActivityForResult(intent, 0);
             }
 
     		return;
@@ -290,10 +252,52 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
     public void onCheckedChanged(RadioGroup group, int checkedId) {
         if (checkedId == R.id.button_one) {
             mScreenMode = ScreenMode.FULLSCREEN;
-
-        } else if (checkedId == R.id.button_two) {
-            mScreenMode = ScreenMode.FRAGMENT;
-
         }
+
+        else if (checkedId == R.id.button_two) {
+            mScreenMode = ScreenMode.FRAGMENT;
+        }
+
+        else if (checkedId == R.id.button_default_status) {
+            mStatusMode = StatusMode.DEFAULT;
+        }
+
+        else if (checkedId == R.id.button_custom_status) {
+            mStatusMode = StatusMode.CUSTOM;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (data != null) {
+            showError(this, data.getStringExtra(ERROR_DIALOG_TITLE), data.getStringExtra(ERROR_DIALOG_MESSAGE));
+        }
+    }
+
+    protected static void showError(Context context, String title, String message) {
+        // Create the dialog
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
+        alertBuilder.setTitle(title);
+        alertBuilder.setMessage(message);
+
+        // Get app icon ID
+        try {
+            final String packageName = context.getPackageName();
+            PackageInfo packageInfo = context.getPackageManager().getPackageInfo(packageName, 0);
+            final int iconId = packageInfo.applicationInfo.icon;
+            alertBuilder.setIcon(iconId);
+        } catch (android.content.pm.PackageManager.NameNotFoundException e) {
+            Log.d(TAG, "Failed to obtain packageName and packageInfo");
+        }
+
+        alertBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+
+        alertBuilder.show();
     }
 }

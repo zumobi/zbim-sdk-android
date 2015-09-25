@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
@@ -20,15 +21,14 @@ import android.widget.ToggleButton;
 import com.zumobi.zbim.ContentWidget;
 import com.zumobi.zbim.ContentHubFragment;
 import com.zumobi.zbim.ZBiM;
+import com.zumobi.zbim.exceptions.ZBiMStateException;
 import com.zumobi.zbim.interfaces.ContentWidgetDelegate;
 import com.zumobi.zbim.listeners.OnPageActionListener;
 import com.zumobi.zbim.listeners.OnScrollListener;
 
-import org.xwalk.core.XWalkView;
-
 import java.io.Serializable;
 
-public class ActivityFragmentHub extends FragmentActivity implements OnClickListener, OnPageActionListener, OnScrollListener, ContentWidgetDelegate {
+public class ActivityFragmentHub extends FragmentActivity implements OnClickListener, OnScrollListener, ContentWidgetDelegate {
 
 	// Constants
 	private final String TAG = this.getClass().getSimpleName();
@@ -66,9 +66,6 @@ public class ActivityFragmentHub extends FragmentActivity implements OnClickList
 		mButtonBack.setOnClickListener(this);
 		mButtonClose.setOnClickListener(this);
 		
-		// start off with Back and Forward buttons disabled - these will be enabled by callback
-		mButtonBack.setEnabled(false);
-		
 		// Check that the activity is using the layout version with
         // the fragment_container FrameLayout
         if (findViewById(R.id.fragment_container) != null) {
@@ -83,18 +80,29 @@ public class ActivityFragmentHub extends FragmentActivity implements OnClickList
             // Create the other fragment
             mEmbeddedWebViewFragment = new EmbeddedWebViewFragment();
 
-            // if there exists a stored Content Widget, then show that article/channel/hub fragment, otherwise show the default hub
-            ContentWidget contentWidget = ZBiM.getInstance(this).getSelectedContentWidget();
-            if (contentWidget == null) {
-                attachFragment(null);
-            } else {
-                ZBiM.getInstance(this).setContentWidgetDelegate(this);
-                contentWidget.performAction();
-            }
+            try {
+                // if there exists a stored Content Widget, then show that article/channel/hub fragment, otherwise show the default hub
+                ContentWidget contentWidget = ZBiM.getSelectedContentWidget();
+                if (contentWidget == null) {
+                    attachFragment(null);
+                } else {
+                    ZBiM.setContentWidgetDelegate(this);
+                    contentWidget.performAction();
+                }
+            } catch (ZBiMStateException ex) {
 
+                Intent data = new Intent();
+                data.putExtra(MainActivity.ERROR_DIALOG_TITLE, ex.getUserTitle());
+                data.putExtra(MainActivity.ERROR_DIALOG_MESSAGE, ex.getUserMessage());
+
+                this.setResult(0, data);
+                this.finish();
+            }
         }
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mContentNavigationReciever, new IntentFilter(ZBiM.CONTENT_TYPE_CHANGED_ACTION));
+
+        ZBiM.setReferrerTracking("Fragment ContentHub");
 	}
 
     private void switchContainerItem() {
@@ -109,23 +117,26 @@ public class ActivityFragmentHub extends FragmentActivity implements OnClickList
         getSupportFragmentManager().executePendingTransactions();
     }
 
-	/**
+    /**
+     * this is used to prevent the Contenthub from being destroyed, otherwise video playback is drastically interrupted.
+     * @param newConfig
+     */
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
+
+    /**
 	 * OnClickListener Interface implementation
 	 */
 	@Override
 	public void onClick(View view) {
 		if (view == mToggleButton) {
 			switchContainerItem();
-			return;
-		}
-
-        if (view == mButtonBack) {
+		} else if (view == mButtonBack) {
             mContentHubFragment.goBack();
-            return;
-        }
-
-		// exit this activity
-		if (view == mButtonClose) {
+        } else if (view == mButtonClose) {
+            // exit this activity
 			finish();
 		}
 	}
@@ -134,39 +145,11 @@ public class ActivityFragmentHub extends FragmentActivity implements OnClickList
     protected void onDestroy() {
 
         // Important: this is required cleanup
-        ZBiM.getInstance(this).setContentWidgetDelegate(null);
-        ZBiM.getInstance(this).selectContentWidget(null);
+        ZBiM.setContentWidgetDelegate(null);
+        ZBiM.selectContentWidget(null);
 
         super.onDestroy();
     }
-
-    /**
-	 * OnPageActionListener Interface implementation
-	 */
-	@Override
-	public void onPageStarted(XWalkView view, String url) {
-		Log.i(TAG,"onPageStarted");
-	}
-
-	@Override
-	public void onPageFinished(XWalkView view, String url) {
-		Log.i(TAG,"onPageFinished");
-		
-		final boolean canGoBack = view.getNavigationHistory().canGoBack();
-
-		// update the UI on the UI thread
-		this.runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				mButtonBack.setEnabled(canGoBack);
-			}
-		});
-	}
-
-	@Override
-	public void onReceivedError(XWalkView view, int errorCode, String description, String failingUrl) {
-		Log.i(TAG,"onReceivedError");
-	}
 
     /**
      * ContentNavigation Receiver
@@ -274,10 +257,9 @@ public class ActivityFragmentHub extends FragmentActivity implements OnClickList
     Concrete implementation of ContentWidgetDelegate
      */
     @Override
-    public void attachFragment(String strUri) {
+    public void attachFragment(String strUri) throws ZBiMStateException {
         // the fragment must be returned by ZBiM
-        mContentHubFragment = ZBiM.getInstance(this).getContentHubFragment(strUri);//NOTE: a specific URI can be passed here, or null to use default hub
-        mContentHubFragment.setOnPageActionListener(this);
+        mContentHubFragment = ZBiM.getContentHubFragment(strUri);//NOTE: a specific URI can be passed here, or null to use default hub
         mContentHubFragment.setOnScrollListener(this);
 
         // Add the fragment to the 'fragment_container' FrameLayout

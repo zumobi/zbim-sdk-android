@@ -1,6 +1,9 @@
 buildscript {
     repositories {
         jcenter()
+        maven {
+            url 'https://download.01.org/crosswalk/releases/crosswalk/android/maven2'
+        }
         flatDir {
             dirs 'libs'
         }
@@ -13,6 +16,9 @@ apply plugin: 'com.android.application'
 
 repositories {
     jcenter()
+    maven {
+        url 'https://download.01.org/crosswalk/releases/crosswalk/android/maven2'
+    }
     flatDir {
         dirs 'libs'
     }
@@ -52,16 +58,15 @@ android {
 }
 
 dependencies {
-    compile(name:'zbim-sdk-android-1.2.0.41.RELEASE-20150626.204703-1', ext:'aar')
-    compile(name:'xwalk_core_library', ext:'aar')
+    compile(name:'zbim-sdk-android-1.2.0.144.RELEASE-20150925.204356-1', ext:'aar')
     compile 'com.google.code.gson:gson:2.3'
     compile 'com.google.android.gms:play-services:6.5.87'
     compile 'com.amazonaws:aws-android-sdk-sqs:2.2.1'
     compile 'org.apache.httpcomponents:httpmime:4.1'
     compile 'oauth.signpost:signpost-core:1.2.1.2'
-    compile 'org.twitter4j:twitter4j-core:3.0.5'
     compile 'com.squareup.okhttp:okhttp:2.3.0'
     compile 'com.arcao:slf4j-timber:1.5'
     compile 'com.android.support:multidex:1.0.0'
+    compile 'org.xwalk:xwalk_core_library:14.43.343.23'
 }
 
