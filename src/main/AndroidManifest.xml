@@ -82,16 +82,6 @@
                 android:value="com.zumobi.android.zbimsampleapp.MainActivity" />
         </activity>
 
-        <!-- STATUS UI FOR DEVELOPERS (child) -->
-        <activity
-            android:name=".ShowCustomStatusUiActivity"
-            android:label="@string/title_activity_show_status_ui"
-            android:parentActivityName=".MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.zumobi.android.zbimsampleapp.MainActivity" />
-        </activity>
-
         <!-- CONTENT WIDGET ACTIVITY (child) -->
         <activity
             android:name=".ContentWidgetListActivity"
